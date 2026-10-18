@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Request Outing – SRM</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --navy: #073766;
+      --navy-dark: #052b50;
+      --accent-blue: #073766;
+      --red: #f2d70a;
+      --red-bg: #fdf4bd;
+      --red-border: #efcb00;
+      --green: #16a34a;
+      --green-bg: #dcfce7;
+      --green-border: #22c55e;
+      --yellow-bg: #f7f8e8;
+      --yellow-border: #deca2f;
+      --gray-bg: #f3f4f6;
+      --gray-border: #e5e7eb;
+      --text-dark: #202833;
+      --text-mid: #374151;
+      --text-muted: #6b7280;
+      --radius: 10px;
+      --radius-sm: 7px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #fff;
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* HEADER */
+    .header {
+      width: 100%;
+      background: var(--navy);
+      padding: 0 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 10px 0 6px;
+    }
+
+    .header-logo {
+      width: 38px;
+      height: 38px;
+      overflow: hidden;
+      border-radius: 50%;
+      background: white;
+      flex-shrink: 0;
+    }
+
+    .header-logo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .header-title {
+      color: white;
+      font-weight: 700;
+      font-size: 21px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .header-title::after {
+      content: "";
+      display: block;
+      width: 10px;
+      height: 5px;
+      margin: 1px auto 0;
+      border-top: 1.5px solid white;
+      border-bottom: 1.5px solid white;
+      box-shadow: 0 1.5px 0 white;
+    }
+
+    .header-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 8px 0 22px;
+    }
+
+    .header-email {
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 108px;
+      overflow: hidden;
+      font-size: 18px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-logout {
+      background: transparent;
+      color: white;
+      width: 180px;
+      border: 2px solid white;
+      padding: 9px 16px;
+      border-radius: 6px;
+      font-size: 18px;
+      font-family: inherit;
+      font-weight: 400;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* CONTENT */
+    .content {
+      width: 100%;
+      max-width: 480px;
+      padding: 76px 32px 48px;
+    }
+
+    /* PAGE TITLE */
+    .page-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--text-dark);
+      margin-bottom: 14px;
+    }
+
+    .page-title-divider {
+      height: 2.5px;
+      background: var(--accent-blue);
+      border-radius: 2px;
+      margin: 0 auto 28px;
+      width: 100%;
+    }
+
+    .alert-text {
+      display: none;
+      color: #dc2626;
+      font-weight: 700;
+      text-align: left;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .alert-text.visible {
+      display: block;
+    }
+
+    /* FORM CARD */
+    .form-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 28px 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      margin-bottom: 20px;
+    }
+
+    .field {
+      margin-bottom: 29px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text-mid);
+      margin-bottom: 24px;
+    }
+
+    .field label.blue {
+      color: var(--text-mid);
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--gray-border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 18px;
+      color: var(--text-dark);
+      background: white;
+      outline: none;
+      appearance: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: #adb5bd;
+    }
+
+    .field input#roomNumber:placeholder-shown {
+      background-color: #fff4f4;
+      border-color: #d94b4b;
+    }
+
+    .field input:disabled,
+    .field input[readonly],
+    .field select:disabled,
+    .field textarea:disabled {
+      color: #b8b8bd;
+      -webkit-text-fill-color: #b8b8bd;
+      background-color: #fdfdfd;
+      cursor: not-allowed;
+      opacity: 1;
+    }
+
+    .field input.submitted-empty:disabled,
+    .field input.submitted-empty[readonly],
+    .field select.submitted-empty:disabled,
+    .field textarea.submitted-empty:disabled,
+    .field textarea.submitted-empty[readonly] {
+      color: #adb5bd;
+      -webkit-text-fill-color: #adb5bd;
+      background-color: #fff8f8;
+      border-color: #dbdcde;
+    }
+
+    .field input[readonly]:focus,
+    .field select:focus,
+    .field textarea:focus {
+      cursor: not-allowed;
+    }
+
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-color: white;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    .field select.unset {
+      background-color: #fff8f8;
+      border-color: #dbdcde;
+    }
+
+    .time-picker {
+      position: relative;
+    }
+
+    .time-picker-trigger {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid var(--gray-border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14.5px;
+      color: var(--text-dark);
+      background: white;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .time-picker-trigger.unset {
+      background: #fff8f8;
+      border-color: #dbdcde;
+      color: #adb5bd;
+    }
+
+    .time-picker-trigger:disabled {
+      color: #adb5bd;
+      background: #fff8f8;
+      border-color: #dbdcde;
+      cursor: not-allowed;
+    }
+
+    .time-picker-panel {
+      position: absolute;
+      z-index: 20;
+      top: calc(100% + 6px);
+      left: 0;
+      width: min(100%, 320px);
+      padding: 16px;
+      border: 1px solid var(--gray-border);
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 8px 24px rgba(17, 24, 39, 0.18);
+    }
+
+    .time-picker-panel[hidden] {
+      display: none;
+    }
+
+    .time-picker-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .clock-dial {
+      position: relative;
+      width: min(100%, 248px);
+      aspect-ratio: 1;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      background: #eef2ff;
+      touch-action: manipulation;
+    }
+
+    .clock-dial::before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--navy);
+      content: "";
+      transform: translate(-50%, -50%);
+    }
+
+    .clock-choice {
+      position: absolute;
+      display: grid;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text-dark);
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+    }
+
+    .clock-choice.selected,
+    .clock-choice:hover,
+    .clock-choice:focus-visible {
+      background: var(--navy);
+      color: white;
+      outline: none;
+    }
+
+    .clock-ampm {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .clock-ampm button,
+    .time-picker-actions button {
+      padding: 7px 12px;
+      border: 1px solid var(--gray-border);
+      border-radius: 6px;
+      background: white;
+      color: var(--text-dark);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .clock-ampm button.selected {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: white;
+    }
+
+    .time-picker-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .time-picker-actions .time-done {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: white;
+    }
+
+    .field textarea {
+      resize: none;
+      min-height: 72px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 4px;
+    }
+
+    .btn-submit:hover {
+      background: var(--navy-dark);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+
+    /* OTP CARD */
+    .otp-card {
+    display: none;
+    background: #f2faec;
+    border: 1px solid #c1de7d;
+    border-radius: 14px;
+    padding: 22px 18px;
+    text-align: right;
+    margin-bottom: 24px;
+}
+
+    .otp-card.visible {
+      display: block;
+    }
+
+    .otp-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .otp-divider {
+      height: 2px;
+      background: var(--accent-blue);
+      border-radius: 2px;
+      margin: 0 auto 14px;
+      width: 80%;
+    }
+
+    .otp-dates {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .otp-code {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--green);
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .otp-note {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* SECTION HEADING */
+    .section-heading {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    .section-divider {
+      height: 2.5px;
+      background: var(--accent-blue);
+      border-radius: 2px;
+      margin-bottom: 16px;
+    }
+
+    #activeSection .section-divider {
+      display: none;
+    }
+
+    /* BOOKING CARD */
+    .booking-card {
+      background: white;
+      border: 2px solid var(--green-border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .booking-card.active-card {
+      border-color: var(--red-border);
+      padding: 20px;
+    }
+
+    .booking-card.active-card .booking-title {
+      font-size: 16px;
+      color: #444;
+    }
+
+    .booking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .booking-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-dark);
+    }
+
+    .badge {
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 5px 11px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+.badge-confirmed {
+    background: #99eeb4;
+    color: #1c5c31;
+}
+
+    .badge-active {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1.5px solid var(--red-border);
+    }
+
+    .booking-card.active-card .badge-active {
+      background: #ffe08a;
+      color: #806000;
+      border: 0;
+    }
+
+    .booking-row {
+      font-size: 13px;
+      color: var(--text-mid);
+      margin-bottom: 5px;
+      line-height: 1.4;
+    }
+
+    .booking-card.active-card .booking-row {
+      font-size: 15px;
+      color: #4b4b4b;
+      line-height: 1.5;
+    }
+
+    .booking-row strong {
+      color: var(--text-dark);
+    }
+
+    .booking-card.active-card .booking-row strong {
+      color: #444;
+    }
+
+    .handled-box {
+      background: var(--gray-bg);
+      border-radius: 5px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.5;
+    }
+
+    .booking-card.active-card .handled-box {
+      background: #f3f5f6;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+    }
+
+    .handled-box strong {
+      color: var(--text-dark);
+    }
+
+    #activeSection {
+      display: none;
+    }
+
+    /* FOOTER */
+    .footer {
+      width: 100%;
+      max-width: 480px;
+      background: #f8f9fa;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      text-align: center;
+      padding: 18px 16px 24px;
+      margin: 0 16px 32px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .footer a {
+      color: var(--accent-blue);
+      text-decoration: underline;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #111827;
+      color: white;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      z-index: 999;
+      transition: transform 0.3s cubic-bezier(.34, 1.56, .64, 1);
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="header-top">
+      <div class="header-logo"><img src="SRM_LOGO.jpeg" alt="SRM Institute of Science and Technology" /></div>
+      <span class="header-title">Request Outing</span>
+    </div>
+    <div class="header-bottom">
+      <span class="header-email" id="headerEmail">pm4599@srmist.edu.in</span>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- FORM -->
+    <div class="page-title">Request Outing</div>
+    <div class="page-title-divider"></div>
+    <div class="alert-text" id="requestAlert">You already have a pending or active outing request. Please complete or delete it before making a new one.</div>
+    <div class="form-card">
+      <div class="field">
+        <label>Full Name:</label>
+        <input type="text" id="fullName" value="PREETI (RA2411026011353)" readonly />
+      </div>
+      <div class="field">
+        <label>Email (SRM):</label>
+        <input type="email" id="srmEmail" value="pm4599@srmist.edu.in" readonly />
+      </div>
+      <div class="field">
+        <label>Room Number:</label>
+        <input type="text" id="roomNumber" placeholder="Enter your room number" />
+      </div>
+      <div class="field">
+        <label>Hostel Name:</label>
+        <input type="text" id="hostelName" value="Esq-B" readonly />
+      </div>
+      <div class="field">
+        <label class="blue">Out Date:</label>
+        <input type="date" id="outDate" />
+      </div>
+      <div class="field">
+        <label class="blue">Out Time:</label>
+        <div class="time-picker" id="outTimePicker">
+          <select id="outTime" class="unset" hidden aria-hidden="true" tabindex="-1">
+            <option value="">Select time</option>
+          </select>
+          <button type="button" class="time-picker-trigger unset" id="outTimeTrigger" aria-haspopup="dialog" aria-expanded="false">Select time</button>
+          <div class="time-picker-panel" id="outTimePanel" role="dialog" aria-label="Select outing time" hidden>
+            <div class="time-picker-header"><span>Choose hour</span><strong id="outTimePreview">--:--</strong></div>
+            <div class="clock-ampm" id="outTimeAmpm"></div>
+            <div class="clock-dial" id="outTimeDial"></div>
+            <div class="time-picker-actions">
+              <button type="button" class="time-cancel">Cancel</button>
+              <button type="button" class="time-done">Done</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="blue">In Date:</label>
+        <input type="date" id="inDate" />
+      </div>
+      <div class="field">
+        <label class="blue">In Time:</label>
+        <div class="time-picker" id="inTimePicker">
+          <select id="inTime" class="unset" hidden aria-hidden="true" tabindex="-1">
+            <option value="">Select time</option>
+          </select>
+          <button type="button" class="time-picker-trigger unset" id="inTimeTrigger" aria-haspopup="dialog" aria-expanded="false">Select time</button>
+          <div class="time-picker-panel" id="inTimePanel" role="dialog" aria-label="Select return time" hidden>
+            <div class="time-picker-header"><span>Choose hour</span><strong id="inTimePreview">--:--</strong></div>
+            <div class="clock-ampm" id="inTimeAmpm"></div>
+            <div class="clock-dial" id="inTimeDial"></div>
+            <div class="time-picker-actions">
+              <button type="button" class="time-cancel">Cancel</button>
+              <button type="button" class="time-done">Done</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="blue">Reason for Outing:</label>
+        <textarea id="reason" placeholder="Enter reason for outing"></textarea>
+      </div>
+      <div class="field">
+        <label>Parent Email:</label>
+        <input type="email" id="parentEmail" value="malikvikas251@gmail.com" readonly />
+      </div>
+      <div class="field">
+        <label>Parent Phone:</label>
+        <input type="tel" id="parentPhone" value="7056068745" readonly />
+      </div>
+      <button class="btn-submit" onclick="handleSubmit()">Send Request</button>
+    </div>
+
+
+    <!-- CURRENT OUTING -->
+    <div id="activeSection">
+      <div class="section-heading"></div>
+      <div class="section-divider"></div>
+      <div id="activeBookings"></div>
+    </div>
+
+    <!-- OTP -->
+    <div class="otp-card" id="otpCard">
+      <div class="otp-title">OTP for Arch Gate</div>
+      <div class="otp-divider"></div>
+      <div class="otp-dates" id="otpDates"></div>
+      <div class="otp-code" id="otpCode"></div>
+      <div class="otp-note">Please present this OTP at the Arch Gate<br>when returning to SRM.</div>
+    </div>
+
+    <!-- PAST OUTINGS -->
+    <div class="section-heading">Past Outings</div>
+    <div class="section-divider"></div>
+    <div id="pastBookings"></div>
+
+  </div>
+
+  <footer class="footer">
+    Created by: Kartik Mittal (<a href="mailto:km5260@srmist.edu.in">km5260@srmist.edu.in</a>)<br>
+    Co-developer: Reetam Kole (<a href="mailto:rk0598@srmist.edu.in">rk0598@srmist.edu.in</a>)<br>
+    Maintained by:<br>
+    Yatin Anam (<a href="mailto:ya8476@srmist.edu.in">ya8476@srmist.edu.in</a>)<br>
+    Viva Baranwal (<a href="mailto:vb1680@srmist.edu.in">vb1680@srmist.edu.in</a>)<br>
+    Krishanth R J (<a href="mailto:kr3976@srmist.edu.in">kr3976@srmist.edu.in</a>)<br>
+    Other SRM links:<br>
+    <a href="#">Student Portal</a><br>
+    <a href="#">Academia</a><br>
+    <a href="#">SRM Hostels</a>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Time options retain the existing 24-hour, five-minute choices.
+    function populateTimes(id) {
+      const sel = document.getElementById(id);
+      for (let h = 0; h < 24; h++) {
+        for (let m = 0; m < 60; m += 5) {
+          const hh = String(h).padStart(2, '0'), mm = String(m).padStart(2, '0');
+          const o = document.createElement('option');
+          o.value = o.textContent = `${hh}:${mm}`;
+          sel.appendChild(o);
+        }
+      }
+    }
+    populateTimes('outTime');
+    populateTimes('inTime');
+
+    function setupClockPicker(id) {
+      const select = document.getElementById(id);
+      const trigger = document.getElementById(`${id}Trigger`);
+      const panel = document.getElementById(`${id}Panel`);
+      const dial = document.getElementById(`${id}Dial`);
+      const preview = document.getElementById(`${id}Preview`);
+      const ampm = document.getElementById(`${id}Ampm`);
+      const headerLabel = panel.querySelector('.time-picker-header span');
+      const minuteValues = Array.from({ length: 12 }, (_, index) => index * 5);
+      let hour = null;
+      let minute = null;
+      let period = 'AM';
+      let stage = 'hour';
+
+      function formatPreview() {
+        if (hour === null) return '--:--';
+        const hour24 = hour % 12 + (period === 'PM' ? 12 : 0);
+        return `${String(hour24).padStart(2, '0')}:${String(minute || 0).padStart(2, '0')}`;
+      }
+
+      function drawDial() {
+        dial.replaceChildren();
+        const values = stage === 'hour' ? Array.from({ length: 12 }, (_, i) => i + 1) : minuteValues;
+        values.forEach((value, index) => {
+          const angle = (index / values.length) * Math.PI * 2 - Math.PI / 2;
+          const radius = stage === 'hour' ? 40 : 40;
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'clock-choice';
+          button.textContent = stage === 'hour' ? String(value) : String(value).padStart(2, '0');
+          button.style.left = `${50 + Math.cos(angle) * radius}%`;
+          button.style.top = `${50 + Math.sin(angle) * radius}%`;
+          const selectedValue = stage === 'hour' ? hour : minute;
+          button.classList.toggle('selected', selectedValue === value);
+          button.setAttribute('aria-label', stage === 'hour' ? `${value} ${period}` : `${String(value).padStart(2, '0')} minutes`);
+          button.addEventListener('click', () => {
+            if (stage === 'hour') {
+              hour = value;
+              stage = 'minute';
+              headerLabel.textContent = 'Choose minutes';
+            } else {
+              minute = value;
+            }
+            preview.textContent = formatPreview();
+            drawDial();
+          });
+          dial.appendChild(button);
+        });
+      }
+
+      ['AM', 'PM'].forEach(value => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = value;
+        button.addEventListener('click', () => {
+          period = value;
+          ampm.querySelectorAll('button').forEach(option => option.classList.toggle('selected', option === button));
+          preview.textContent = formatPreview();
+          drawDial();
+        });
+        ampm.appendChild(button);
+      });
+
+      function closePicker() {
+        panel.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+
+      function openPicker() {
+        const [currentHour, currentMinute] = select.value ? select.value.split(':').map(Number) : [null, null];
+        hour = currentHour === null ? null : currentHour % 12 || 12;
+        minute = currentMinute === null ? null : currentMinute;
+        period = currentHour !== null && currentHour >= 12 ? 'PM' : 'AM';
+        stage = 'hour';
+        headerLabel.textContent = 'Choose hour';
+        ampm.querySelectorAll('button').forEach(button => button.classList.toggle('selected', button.textContent === period));
+        preview.textContent = formatPreview();
+        drawDial();
+        panel.hidden = false;
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+
+      trigger.addEventListener('click', () => {
+        if (panel.hidden) openPicker();
+        else closePicker();
+      });
+      panel.querySelector('.time-cancel').addEventListener('click', closePicker);
+      panel.querySelector('.time-done').addEventListener('click', () => {
+        if (hour === null || minute === null) {
+          showToast('⚠️ Please select an hour and minutes');
+          return;
+        }
+        const hour24 = hour % 12 + (period === 'PM' ? 12 : 0);
+        select.value = `${String(hour24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+        select.classList.remove('unset');
+        trigger.classList.remove('unset');
+        trigger.textContent = select.value;
+        closePicker();
+      });
+
+      return { trigger, closePicker };
+    }
+
+    const clockPickers = {
+      outTime: setupClockPicker('outTime'),
+      inTime: setupClockPicker('inTime')
+    };
+
+    function resetClockPicker(id) {
+      const select = document.getElementById(id);
+      select.value = '';
+      select.classList.add('unset');
+      clockPickers[id].trigger.textContent = 'Select time';
+      clockPickers[id].trigger.classList.add('unset');
+      clockPickers[id].closePicker();
+    }
+
+    // Seed data
+    const pastOutings = [
+      {
+        outDate: '2026-03-29', outTime: '07:25', inDate: '2026-03-29', inTime: '14:00',
+        reason: 'JAVA', handledOn: '29/03/2026, 13:51:34', handledBy: 'c73961'
+      },
+      {
+        outDate: '2026-03-28', outTime: '07:40', inDate: '2026-03-28', inTime: '14:00',
+        reason: 'GST Road', handledOn: '28/03/2026, 12:43:43', handledBy: 'c73961'
+      },
+      {
+        outDate: '2025-11-02', outTime: '06:30', inDate: '2025-11-02', inTime: '16:00',
+        reason: 'NPTEL EXAM', handledOn: '02/11/2025, 15:28:33', handledBy: 'c73961'
+      },
+    ];
+
+    let activeOuting = JSON.parse(sessionStorage.getItem('activeOuting') || 'null');
+
+    function cardHTML(o, isActive) {
+      return `
+    <div class="booking-card ${isActive ? 'active-card' : ''}">
+      <div class="booking-header">
+        <span class="booking-title">${isActive ? 'Current Request' : 'Booking Details'}</span>
+        <span class="badge ${isActive ? 'badge-active' : 'badge-confirmed'}">${isActive ? 'STILL_OUT' : 'CONFIRMED'}</span>
+      </div>
+      <div class="booking-row"><strong>Out Date:</strong> ${o.outDate}</div>
+      <div class="booking-row"><strong>Out Time:</strong> ${o.outTime}</div>
+      <div class="booking-row"><strong>In Date:</strong> ${o.inDate}</div>
+      <div class="booking-row"><strong>In Time:</strong> ${o.inTime}</div>
+      <div class="booking-row"><strong>Reason:</strong> ${o.reason}</div>
+      <div class="booking-row"><strong>Status:</strong> ${isActive ? 'still_out' : 'confirmed'}</div>
+      ${o.handledOn ? `<div class="handled-box">
+        <strong>Handled on:</strong> ${o.handledOn}<br>
+        <strong>Handled by:</strong> ${isActive ? 'Priya' : o.handledBy}
+      </div>` : ''}
+    </div>`;
+    }
+
+
+    function setFormLocked(locked) {
+      const fields = [
+        'fullName', 'srmEmail', 'roomNumber', 'hostelName', 'outDate', 'outTime',
+        'inDate', 'inTime', 'reason', 'parentEmail', 'parentPhone'
+      ];
+      const readOnlyAfterSubmit = ['roomNumber', 'outDate', 'inDate', 'reason'];
+      const highlightedAfterSubmit = ['roomNumber', 'outDate', 'outTime', 'inDate', 'inTime', 'reason'];
+
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        el.classList.toggle('submitted-empty', locked && highlightedAfterSubmit.includes(id));
+
+        if (readOnlyAfterSubmit.includes(id)) {
+          el.readOnly = locked;
+        } else {
+          el.disabled = locked;
+        }
+      });
+      ['outTime', 'inTime'].forEach(id => {
+        document.getElementById(id).disabled = locked;
+        clockPickers[id].trigger.disabled = locked;
+        clockPickers[id].trigger.classList.toggle('submitted-empty', locked);
+        if (locked) clockPickers[id].closePicker();
+      });
+
+      const submitBtn = document.querySelector('.btn-submit');
+      if (submitBtn) {
+        submitBtn.disabled = locked;
+        submitBtn.style.opacity = locked ? '0.7' : '1';
+        submitBtn.style.cursor = locked ? 'not-allowed' : 'pointer';
+      }
+    }
+
+    function render() {
+      const otpCard = document.getElementById('otpCard');
+      const activeSection = document.getElementById('activeSection');
+      const activeBookings = document.getElementById('activeBookings');
+      const pastBookings = document.getElementById('pastBookings');
+
+      setFormLocked(Boolean(activeOuting));
+
+      if (activeOuting) {
+        otpCard.classList.add('visible');
+        document.getElementById('otpDates').textContent =
+          `Out Date: ${activeOuting.outDate} | In Date: ${activeOuting.inDate}`;
+        document.getElementById('otpCode').textContent = activeOuting.otp;
+        activeSection.style.display = 'block';
+        activeBookings.innerHTML = cardHTML(activeOuting, true);
+      } else {
+        otpCard.classList.remove('visible');
+        activeSection.style.display = 'none';
+        activeBookings.innerHTML = '';
+      }
+
+      pastBookings.innerHTML = pastOutings.map(o => cardHTML(o, false)).join('');
+    }
+
+
+    function handleSubmit() {
+      document.getElementById('requestAlert').classList.add('visible');
+      const v = id => document.getElementById(id).value.trim();
+      const required = ['fullName', 'srmEmail', 'roomNumber', 'outDate', 'outTime', 'inDate', 'inTime', 'reason'];
+      const missingRequired = required.filter(id => {
+        const el = document.getElementById(id);
+        return !el.disabled && !el.readOnly && !el.value.trim();
+      });
+
+      if (missingRequired.length) {
+        showToast('⚠️ Please fill all required fields');
+        return;
+      }
+
+      const now = new Date();
+      const p = n => String(n).padStart(2, '0');
+      const handledOn = `${p(now.getDate())}/${p(now.getMonth() + 1)}/${now.getFullYear()}, `
+        + `${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`;
+
+      activeOuting = {
+        outDate: document.getElementById('outDate').value,
+        outTime: document.getElementById('outTime').value,
+        inDate: document.getElementById('inDate').value,
+        inTime: document.getElementById('inTime').value,
+        reason: v('reason'),
+        otp: Math.floor(100000 + Math.random() * 900000).toString(),
+        handledOn, handledBy: 'Priya'
+      };
+      sessionStorage.setItem('activeOuting', JSON.stringify(activeOuting));
+      document.getElementById('headerEmail').textContent = v('srmEmail');
+
+      ['roomNumber', 'outDate', 'outTime', 'inDate', 'inTime', 'reason']
+        .forEach(id => { document.getElementById(id).value = ''; });
+      resetClockPicker('outTime');
+      resetClockPicker('inTime');
+
+      render();
+      showToast('✅ Request submitted!');
+      setTimeout(() => document.getElementById('otpCard').scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+    }
+
+    function handleLogout() {
+      activeOuting = null;
+      sessionStorage.removeItem('activeOuting');
+      document.getElementById('requestAlert').classList.remove('visible');
+      document.getElementById('headerEmail').textContent = 'pm4599@srmist.edu.in';
+      ['fullName', 'srmEmail', 'roomNumber', 'hostelName', 'outDate', 'outTime', 'inDate', 'inTime', 'reason', 'parentEmail', 'parentPhone']
+        .forEach(id => { document.getElementById(id).value = ''; });
+      document.getElementById('fullName').value = 'PREETI (RA2411026011353)';
+      document.getElementById('srmEmail').value = 'pm4599@srmist.edu.in';
+      document.getElementById('hostelName').value = 'Esq-B';
+      document.getElementById('parentEmail').value = 'malikvikas251@gmail.com';
+      document.getElementById('parentPhone').value = '7056068745';
+      resetClockPicker('outTime');
+      resetClockPicker('inTime');
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      showToast('👋 Logged out');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    render();
+  </script>
+</body>
+
+</html>
